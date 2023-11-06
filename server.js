@@ -70,6 +70,32 @@ app.post('/api/notes', (req,res) => {
 
 });
 
+app.delete('/api/notes/:id', (req, res) => {
+    const { id } = req.params;
+
+    fs.readFile('./db/db.json', 'utf8', (err, data) => {
+        if (err) {
+            console.error(err);
+        } else {
+            const parsedNotes = JSON.parse(data);
+            const updatedNotes = parsedNotes.filter(note => note.id !== id);
+
+            if (updatedNotes.length < parsedNotes.length) {
+                fs.writeFile('./db/db.json', JSON.stringify(updatedNotes, null, 4), writeErr => {
+                    if (writeErr) {
+                        console.error(writeErr);
+                        res.status(500).json({ message: 'Internal Server Error' });
+                    } else {
+                        res.status(204).end();
+                    }
+                });
+            } else {
+                res.status(404).json({ message: 'Note not found' });
+            }
+        }
+    });
+});
+
 app.get('*', (req, res) => 
     res.sendFile(path.join(__dirname, '/public/index.html'))
 );

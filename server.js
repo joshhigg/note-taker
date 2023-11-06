@@ -1,8 +1,10 @@
+// Needed dependencies
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 
+// Set port
 const PORT = process.env.PORT || 3001;
 
 const app = express();
@@ -11,10 +13,12 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static('public'));
 
+// Route to the notes file
 app.get('/notes', (req, res) => 
     res.sendFile(path.join(__dirname, '/public/notes.html'))
 );
 
+// Get request to view the notes
 app.get('/api/notes', (req, res) => {
     fs.readFile('./db/db.json', 'utf8', (err, data) => {
         if(err) {
@@ -26,6 +30,7 @@ app.get('/api/notes', (req, res) => {
     })
 });
 
+// Post request to add new note
 app.post('/api/notes', (req,res) => {
     console.log(`${req.method} request received to add note`);
 
@@ -69,6 +74,7 @@ app.post('/api/notes', (req,res) => {
 
 });
 
+// Delete request to remove added note
 app.delete('/api/notes/:id', (req, res) => {
     const { id } = req.params;
 
@@ -95,12 +101,13 @@ app.delete('/api/notes/:id', (req, res) => {
     });
 });
 
+// Wildcard route to redirect back to main page if other path gets entered
 app.get('*', (req, res) => 
     res.sendFile(path.join(__dirname, '/public/index.html'))
 );
 
 
-
+// Listening port
 app.listen(PORT, () => 
 console.log(`App listening at http://localhost:${PORT}`)
 );

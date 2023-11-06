@@ -1,6 +1,5 @@
 const express = require('express');
 const path = require('path');
-const savedNotes = require('./db/db.json');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 
